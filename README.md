@@ -93,7 +93,7 @@ MIT © [Shohanur Islam]
 
 ## 📫 Support
 
-- Email: support@example.com
+- Email: shuvosa67@gmail.com
 - Issues: [GitHub Issues](https://github.com/shuvosa/eTrade-Custom-Shopify-Theme/issues)
 
 
