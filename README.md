@@ -5,6 +5,10 @@
 
 > A modern, responsive Shopify theme built with Liquid, TailwindCSS, and JavaScript.
 
+
+[🌐 Visit Live Site](https://sk1223.myshopify.com/)
+**Store Password:** `shuvosa67`
+![Sketch Illustration](./assets/screenshot.png)
 ## ✨ Features
 
 ### Design & Layout
