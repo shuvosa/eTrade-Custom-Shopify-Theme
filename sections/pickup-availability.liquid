@@ -1,0 +1,44 @@
+<!-- sections/pickup-availability.liquid -->
+{% assign pick_up_availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true %}
+{% if pick_up_availabilities.size > 0 %}
+  {% assign closest_location = pick_up_availabilities.first %}
+  <div class="pickup-availability">
+    {% if closest_location.available %}
+      <p>Pickup available at {{ closest_location.location.name }}</p>
+      <p>{{ closest_location.pick_up_time }}</p>
+    {% else %}
+      <p>Pickup currently unavailable at {{ closest_location.location.name }}</p>
+    {% endif %}
+    <button type="button" data-pickup-availability-modal-open>
+      {% if pick_up_availabilities.size == 1 %}
+        View store information
+      {% else %}
+        Check other stores
+      {% endif %}
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="pickup-availability-modal" hidden>
+    <h2>{{ product_variant.title }}</h2>
+    <button type="button" data-pickup-availability-modal-close>Close</button>
+    <ul>
+      {% for availability in pick_up_availabilities %}
+        <li>
+          <h3>{{ availability.location.name }}</h3>
+          {% if availability.available %}
+            <p>Pickup available, {{ availability.pick_up_time | downcase }}</p>
+          {% else %}
+            <p>Pickup currently unavailable</p>
+          {% endif %}
+          <address>
+            {{ availability.location.address | format_address }}
+            {% if availability.location.address.phone %}
+              <br>{{ availability.location.address.phone }}
+            {% endif %}
+          </address>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

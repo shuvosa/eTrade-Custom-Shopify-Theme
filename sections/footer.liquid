@@ -1,0 +1,222 @@
+<!-- sections/footer.liquid -->
+<!-- sections/footer.liquid -->
+
+<!-- sections/footer.liquid -->
+<footer class="bg-gray-900 text-white pt-16 pb-8">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      
+      <!-- Branding & Social -->
+      <div>
+        <h3 class="text-xl font-bold mb-4">{{ section.settings.company_name }}</h3>
+        <p class="text-gray-400 mb-4">{{ section.settings.tagline }}</p>
+        <div class="flex space-x-4">
+          {% for icon in section.blocks %}
+            {% if icon.type == 'social_link' %}
+              <a href="{{ icon.settings.url }}" class="text-gray-400 hover:text-white" target="_blank" rel="noopener">
+                <i class="{{ icon.settings.icon_class }}"></i>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Quick Links (ALWAYS SHOWS) -->
+      <div>
+        <h3 class="text-xl font-bold mb-4">{{ section.settings.quick_links_heading }}</h3>
+        <ul class="space-y-2">
+          {% assign quick_links = section.blocks | where: "type", "quick_link" %}
+          {% if quick_links.size > 0 %}
+            {% for link in quick_links limit:4 %}
+              <li>
+                <a href="{{ link.settings.url }}" class="text-gray-400 hover:text-white">
+                  {{ link.settings.label }}
+                </a>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Blog</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Customer Service (ALWAYS SHOWS) -->
+      <div>
+        <h3 class="text-xl font-bold mb-4">{{ section.settings.service_links_heading }}</h3>
+        <ul class="space-y-2">
+          {% assign service_links = section.blocks | where: "type", "service_link" %}
+          {% if service_links.size > 0 %}
+            {% for link in service_links %}
+              <li>
+                <a href="{{ link.settings.url }}" class="text-gray-400 hover:text-white">
+                  {{ link.settings.label }}
+                </a>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li><a href="#" class="text-gray-400 hover:text-white">Shipping Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Return Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h3 class="text-xl font-bold mb-4">{{ section.settings.contact_heading }}</h3>
+        <ul class="space-y-2">
+          <li class="flex items-center text-gray-400">
+            <i class="fas fa-map-marker-alt mr-2"></i>
+            {{ section.settings.address }}
+          </li>
+          <li class="flex items-center text-gray-400">
+            <i class="fas fa-phone mr-2"></i>
+            <a href="tel:{{ section.settings.phone | strip }}" class="hover:text-white">
+              {{ section.settings.phone }}
+            </a>
+          </li>
+          <li class="flex items-center text-gray-400">
+            <i class="fas fa-envelope mr-2"></i>
+            <a href="mailto:{{ section.settings.email }}" class="hover:text-white">
+              {{ section.settings.email }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Adjusted Footer Bottom Section -->
+<div class="flex flex-col items-center border-t border-gray-800 pt-8 space-y-4">
+  <div class="flex justify-center">
+    <a href="{{ routes.account_login_url }}" class="text-blue-500 hover:text-blue-700 font-medium">
+      Customer Login
+    </a>
+  </div>
+  
+  <p class="text-center text-gray-400">
+    © {{ 'now' | date: '%Y' }} {{ section.settings.company_name }}. All rights reserved.
+  </p>
+</div>
+  </div>
+</footer>
+
+{% schema %}
+
+{
+  "name": "Custom Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "company_name",
+      "label": "Company Name",
+      "default": "eTrade"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Your one-stop shop for all things electronic."
+    },
+    {
+      "type": "text",
+      "id": "quick_links_heading",
+      "label": "Quick Links Heading",
+      "default": "Quick Links"
+    },
+    {
+      "type": "text",
+      "id": "service_links_heading",
+      "label": "Customer Service Heading",
+      "default": "Customer Service"
+    },
+    {
+      "type": "text",
+      "id": "contact_heading",
+      "label": "Contact Info Heading",
+      "default": "Contact Info"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address",
+      "default": "123 Street Name, City, Country"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone Number",
+      "default": "+1 234 567 8900"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Contact Email",
+      "default": "info@etrade.com"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "social_link",
+      "name": "Social Link",
+      "settings": [
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Profile URL"
+        },
+        {
+          "type": "text",
+          "id": "icon_class",
+          "label": "Font Awesome Icon Class",
+          "default": "fab fa-facebook-f"
+        }
+      ]
+    },
+    {
+      "type": "quick_link",
+      "name": "Quick Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Link Text",
+          "default": "About Us"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link URL",
+        }
+      ]
+    },
+    {
+      "type": "service_link",
+      "name": "Service Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Link Text",
+          "default": "Shipping Policy"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Footer",
+      "category": "Footer"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,28 @@
+{% comment %}
+  This section displays the customer's saved addresses with options to edit or add new ones.
+{% endcomment %}
+
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8 text-center">My Addresses</h1>
+  <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {% for address in customer.addresses %}
+        <div class="border rounded-md p-4">
+          <h4 class="font-semibold mb-2">{{ address.name }}</h4>
+          <p>{{ address.street }}</p>
+          <p>{{ address.city }}, {{ address.province_code }} {{ address.zip }}</p>
+          <p>{{ address.country }}</p>
+          <a href="/account/addresses/{{ address.id }}/edit" class="mt-2 text-blue-600 hover:text-blue-800">Edit</a>
+        </div>
+      {% endfor %}
+    </div>
+    <a href="/account/addresses/new" class="mt-4 text-blue-600 hover:text-blue-800">Add New Address</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Addresses Section",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,9 @@
+{
+    "general": {
+      "newsletter_form": {
+        "newsletter_email": "Enter your email address",
+        "submit": "Subscribe",
+        "confirmation": "Thank you for subscribing!"
+      }
+    }
+  }

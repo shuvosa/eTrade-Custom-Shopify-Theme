@@ -1,0 +1,21 @@
+{
+    // Cart Section Template for Shopify
+    "sections": {
+        "cart-section": {
+            "type": "cart-section",
+            "settings": {
+                // Toggle for displaying the cart title
+                "show_title": true,
+                // Text for the checkout button
+                "checkout_button_text": "Checkout"
+            },
+            // Additional content can be added here as needed.
+            "presets": {
+                "name": "Cart Section"
+            }
+        }
+    },
+    "order": [
+        "cart-section"
+    ]
+}

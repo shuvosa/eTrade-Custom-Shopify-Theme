@@ -1,0 +1,271 @@
+{% schema %}
+    {
+      "name": "Main Collection",
+      "settings": [
+        {
+          "type": "range",
+          "id": "products_per_page",
+          "label": "Products per page",
+          "min": 4,
+          "max": 36,
+          "step": 4,
+          "default": 12
+        }
+      ]
+    }
+    {% endschema %}
+    
+    {%- liquid
+      assign current_filter = false
+      if collection.filters != empty
+        assign current_filter = true
+      endif
+    -%}
+    
+      <section class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">{{ collection.title }}</h1>
+  
+  {% if collection.description != blank %}
+    <div class="mb-8 text-gray-600">{{ collection.description }}</div>
+  {% endif %}
+
+  {% if collection.image %}
+    <div class="mb-8">
+      <img src="{{ collection.image | img_url: '1200x400', crop: 'center' }}" 
+           alt="{{ collection.title }}"
+           width="1200" height="400"
+           class="w-full h-48 object-cover rounded-lg">
+    </div>
+  {% endif %}
+
+  <!-- Filters and Product Grid -->
+      
+      <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+      <aside class="w-full md:w-1/4 mb-8 md:mb-0 md:pr-8">
+      <form action="{{ collection.url }}" method="get" class="bg-white rounded-lg shadow-md p-6 space-y-6">
+        <h2 class="text-xl font-semibold">Filters</h2>
+        
+        {%- comment -%}
+          Preserve current sort and count so they aren’t lost when filters change
+        {%- endcomment -%}
+        <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+        <input type="hidden" name="count"   value="{{ paginate.page_size }}">
+
+        {% for filter in collection.filters %}
+          <details class="border-b pb-4">
+            <summary class="font-semibold cursor-pointer">{{ filter.label }}</summary>
+            <div class="mt-2 space-y-2">
+              {% case filter.type %}
+                
+                {% when 'list' %}
+                  {% for value in filter.values %}
+                    <label class="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      name="{{ value.param_name }}"
+                      value="{{ value.value }}"
+                      {% if value.active %}checked{% endif %}
+                      {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                      onchange="this.form.submit()"
+                    >
+                      <span>{{ value.label }} ({{ value.count }})</span>
+                    </label>
+                  {% endfor %}
+
+                {% when 'price_range' %}
+                  <div class="flex space-x-4">
+                    <div>
+                      <label class="block text-sm">Min {{ cart.currency.symbol }}</label>
+                      <input
+                        type="number"
+                        name="{{ filter.min_value.param_name }}"
+                        value="{{ filter.min_value.value | default: 0 }}"
+                        min="0"
+                        max="{{ filter.range_max | money_without_currency }}"
+                        onchange="this.form.submit()"
+                        class="w-full border rounded p-1"
+                      >
+                    </div>
+                    <div>
+                      <label class="block text-sm">Max {{ cart.currency.symbol }}</label>
+                      <input
+                        type="number"
+                        name="{{ filter.max_value.param_name }}"
+                        value="{{ filter.max_value.value | default: filter.range_max }}"
+                        min="0"
+                        max="{{ filter.range_max | money_without_currency }}"
+                        onchange="this.form.submit()"
+                        class="w-full border rounded p-1"
+                      >
+                    </div>
+                  </div>
+                
+              {% endcase %}
+            </div>
+          </details>
+        {% endfor %}
+      </form>
+    </aside>
+
+        
+        <!-- Product Grid -->
+        <div class="w-full md:w-3/4">
+          <!-- Products / Grid Header -->
+<div class="mb-6 flex justify-between items-center">
+  <form action="{{ collection.url }}" method="get" class="flex space-x-4 items-center">
+    {%- comment -%}  
+      1. Re-emit any active filters as hidden inputs  
+      2. Also preserve search term if present  
+      3. Then show count & sort selects in same form  
+    {%- endcomment -%}
+
+    <!-- Preserve filters -->
+    {% for filter in collection.filters %}
+      {% for value in filter.values %}
+        {% if value.active %}
+          <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+
+    <!-- Preserve search term -->
+    {% if search.terms %}
+      <input type="hidden" name="q" value="{{ search.terms | escape }}">
+    {% endif %}
+
+    <!-- Show per-page selector -->
+    <label class="flex items-center space-x-2">
+      <span>Show:</span>
+      <select name="count"
+              onchange="this.form.submit()"
+              class="border rounded px-2 py-1">
+        {% for i in (12..36) %}
+          {% assign rem = i | modulo: 12 %}
+          {% if rem == 0 %}
+            <option value="{{ i }}"
+              {% if i == paginate.page_size %}selected{% endif %}>
+              {{ i }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </label>
+    
+
+
+    <!-- Sort-by selector -->
+    <label class="flex items-center space-x-2">
+      <span>Sort:</span>
+      <select name="sort_by"
+              onchange="this.form.submit()"
+              class="border rounded px-2 py-1">
+        {% for option in collection.sort_options %}
+          <option value="{{ option.value }}"
+                  {% if option.value == collection.sort_by %}selected{% endif %}>
+            {{ option.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </form>
+
+       <!-- Search terms -->
+  <form action="{{ collection.url }}" method="get" class="relative">
+    {%- comment -%}
+      Preserve current filters, sort, and count so searching doesn’t clear them
+    {%- endcomment -%}
+  
+    {%- for filter in collection.filters -%}
+      {%- for value in filter.values -%}
+        {%- if value.active -%}
+          <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+  
+    <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+    <input type="hidden" name="count"   value="{{ paginate.page_size }}">
+  
+    <input
+      type="text"
+      name="q"
+      value="{{ search.terms | escape }}"
+      placeholder="Search products"
+      class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 w-full"
+    >
+    <button
+      type="submit"
+      class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+      aria-label="Search"
+    >
+      🔍
+    </button>
+  </form>
+  
+
+
+</div>
+
+
+          
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in collection.products %}
+              <div
+              class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer relative"
+              onclick="window.location.href='{{ product.url }}'">
+              {% if product.compare_at_price_max > product.price %}
+                <span class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm">
+                  Sale
+                </span>
+              {% endif %}
+              <img src="{{ product.featured_image | img_url: '300x300' }}"
+                 alt="{{ product.featured_image.alt }}"
+                 width="300" height="300"
+                 class="w-full h-48 object-cover">
+              <div class="p-4">
+                <h3 class="text-lg font-semibold mb-2">
+                {{ product.title }}
+                </h3>
+                <div class="text-gray-600 mb-2">
+                  {% if product.price_varies %}
+                    From {{ product.price_min | money }} - {{ product.price_max | money }}
+                  {% else %}
+                    {{ product.price | money }}
+                  {% endif %}
+                </div>
+                {% if product.variants.size > 1 %}
+                <div class="flex space-x-2 mb-4">
+                  {% for option in product.options_with_values %}
+                  {% if option.name == 'Size' %}
+                    {% for value in option.values %}
+                    <button class="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-100">
+                      {{ value }}
+                    </button>
+                    {% endfor %}
+                  {% endif %}
+                  {% endfor %}
+                </div>
+                {% endif %}
+                <form action="/cart/add" method="post" onclick="event.stopPropagation()">
+                <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                  Add to Cart
+                </button>
+                </form>
+              </div>
+              </div>
+            {% else %}
+              <p class="col-span-full text-center">No products found</p>
+            {% endfor %}
+            </div>
+          
+          {% if paginate.pages > 1 %}
+            <div class="mt-8 flex justify-center">
+              {{ paginate | default_pagination }}
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </section>

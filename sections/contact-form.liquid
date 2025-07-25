@@ -1,0 +1,374 @@
+{% comment %} templates/page.contact.liquid {% endcomment %}
+{%- assign bg_color = section.settings.background_color -%}
+{%- assign text_color = section.settings.text_color -%}
+{%- assign padding_top = section.settings.padding_top -%}
+{%- assign padding_bottom = section.settings.padding_bottom -%}
+
+<style>
+  .contact-page {
+    background-color: {{ bg_color }};
+    color: {{ text_color }};
+    padding: {{ padding_top }}px 0 {{ padding_bottom }}px;
+    margin-top: 21px;
+  }
+  
+  .contact-form-container {
+    background: {{ section.settings.form_background }};
+    border-radius: {{ section.settings.form_radius }}px;
+    box-shadow: {{ section.settings.form_shadow }};
+  }
+  
+  .contact-info-card {
+    background: {{ section.settings.info_background }};
+    border-radius: {{ section.settings.info_radius }}px;
+    box-shadow: {{ section.settings.info_shadow }};
+  }
+  
+  .map-container iframe {
+    border-radius: {{ section.settings.map_radius }}px;
+  }
+  
+  .contact-button {
+    background-color: {{ section.settings.button_color }};
+    color: {{ section.settings.button_text_color }};
+    transition: all 0.3s ease;
+  }
+  
+  .contact-button:hover {
+    background-color: {{ section.settings.button_hover_color }};
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="contact-page">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">{{ page.title }}</h1>
+      {% if section.settings.subheading != blank %}
+        <p class="text-xl max-w-2xl mx-auto">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <!-- Left Column: Contact Form -->
+      <div class="contact-form-container p-8 md:p-12">
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <div class="bg-green-100 text-green-700 p-4 rounded-lg mb-6">
+              <p>Thank you for your message. We'll get back to you soon!</p>
+            </div>
+          {% endif %}
+          
+          {% if form.errors %}
+            <div class="bg-red-100 text-red-700 p-4 rounded-lg mb-6">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="ContactFormName" class="block mb-2 font-medium">Name</label>
+              <input type="text" 
+                     id="ContactFormName" 
+                     name="contact[name]" 
+                     class="w-full p-3 border rounded-lg"
+                     required>
+            </div>
+            
+            <div>
+              <label for="ContactFormEmail" class="block mb-2 font-medium">Email</label>
+              <input type="email" 
+                     id="ContactFormEmail" 
+                     name="contact[email]" 
+                     class="w-full p-3 border rounded-lg"
+                     required>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <label for="ContactFormPhone" class="block mb-2 font-medium">Phone (optional)</label>
+            <input type="tel" 
+                   id="ContactFormPhone" 
+                   name="contact[phone]" 
+                   class="w-full p-3 border rounded-lg">
+          </div>
+          
+          <div class="mt-6">
+            <label for="ContactFormMessage" class="block mb-2 font-medium">Message</label>
+            <textarea rows="5" 
+                      id="ContactFormMessage" 
+                      name="contact[body]" 
+                      class="w-full p-3 border rounded-lg"
+                      required></textarea>
+          </div>
+          
+          <div class="mt-8">
+            <button type="submit" class="contact-button px-8 py-4 rounded-lg font-bold text-lg">
+              Send Message
+            </button>
+          </div>
+        {% endform %}
+      </div>
+      
+      <!-- Right Column: Contact Info -->
+      <div>
+        <div class="contact-info-card p-8 mb-10">
+          <h2 class="text-2xl font-bold mb-6">{{ section.settings.info_heading }}</h2>
+          
+          <div class="space-y-6">
+            {% if section.settings.address != blank %}
+              <div class="flex items-start">
+                <div class="mr-4 mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-bold mb-1">Address</h3>
+                  <p>{{ section.settings.address }}</p>
+                </div>
+              </div>
+            {% endif %}
+            
+            {% if section.settings.phone != blank %}
+              <div class="flex items-start">
+                <div class="mr-4 mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-bold mb-1">Phone</h3>
+                  <p>{{ section.settings.phone }}</p>
+                </div>
+              </div>
+            {% endif %}
+            
+            {% if section.settings.email != blank %}
+              <div class="flex items-start">
+                <div class="mr-4 mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-bold mb-1">Email</h3>
+                  <p>{{ section.settings.email }}</p>
+                </div>
+              </div>
+            {% endif %}
+            
+            {% if section.settings.hours != blank %}
+              <div class="flex items-start">
+                <div class="mr-4 mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-bold mb-1">Business Hours</h3>
+                  <p>{{ section.settings.hours }}</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        {% if section.settings.show_map %}
+          <div class="map-container">
+            <h2 class="text-2xl font-bold mb-6">{{ section.settings.map_heading }}</h2>
+            <div class="aspect-video">
+              {{ section.settings.map_embed | replace: '<iframe', '<iframe class="w-full h-full"' }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "We'd love to hear from you! Reach out with any questions or inquiries."
+    },
+    {
+      "type": "header",
+      "content": "Contact Information"
+    },
+    {
+      "type": "text",
+      "id": "info_heading",
+      "label": "Information Heading",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "richtext",
+      "id": "address",
+      "label": "Address",
+      "default": "<p>123 Main Street<br>New York, NY 10001</p>"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone Number",
+      "default": "+1 (555) 123-4567"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email Address",
+      "default": "hello@yourstore.com"
+    },
+    {
+      "type": "richtext",
+      "id": "hours",
+      "label": "Business Hours",
+      "default": "<p>Monday - Friday: 9AM - 6PM<br>Saturday: 10AM - 4PM<br>Sunday: Closed</p>"
+    },
+    {
+      "type": "header",
+      "content": "Map Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_map",
+      "label": "Show Map",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "map_heading",
+      "label": "Map Heading",
+      "default": "Visit Us"
+    },
+    {
+      "type": "html",
+      "id": "map_embed",
+      "label": "Map Embed Code",
+      "info": "Paste Google Maps embed code here"
+    },
+    {
+      "type": "range",
+      "id": "map_radius",
+      "label": "Map Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Form Settings"
+    },
+    {
+      "type": "color",
+      "id": "form_background",
+      "label": "Form Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "form_radius",
+      "label": "Form Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "form_shadow",
+      "label": "Form Shadow",
+      "default": "0 10px 25px rgba(0, 0, 0, 0.05)"
+    },
+    {
+      "type": "header",
+      "content": "Information Card"
+    },
+    {
+      "type": "color",
+      "id": "info_background",
+      "label": "Card Background",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "range",
+      "id": "info_radius",
+      "label": "Card Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "info_shadow",
+      "label": "Card Shadow",
+      "default": "0 4px 12px rgba(0, 0, 0, 0.03)"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#3b82f6"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button Hover Color",
+      "default": "#2563eb"
+    },
+    {
+      "type": "header",
+      "content": "Section Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 64
+    }
+  ]
+}
+{% endschema %}

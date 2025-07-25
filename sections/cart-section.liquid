@@ -1,0 +1,161 @@
+<main class="container mx-auto px-4 py-8 font-sans cart-main">
+    <h1 class="text-4xl font-extrabold text-center mb-10 text-gray-800">Your Shopping Cart</h1>
+    <div class="flex flex-col md:flex-row gap-10">
+        <!-- Cart Items -->
+        <div class="md:w-2/3">
+            {% for item in cart.items %}
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6 transition transform hover:scale-105">
+                    <div class="flex flex-col sm:flex-row items-center">
+                        <img src="{{ item.image | img_url: '150x150' }}" alt="{{ item.product.title }}" width="150" height="150" class="w-24 h-24 object-cover rounded shadow-md">
+                        <div class="sm:ml-6 flex-1 w-full mt-4 sm:mt-0">
+                            <h2 class="text-xl font-bold text-gray-900">{{ item.product.title }}</h2>                            <p class="text-sm text-gray-600">
+                                {% if item.variant.title != 'Default Title' %}
+                                    {{ item.variant.title }}
+                                {% endif %}
+                                {% if item.selling_plan_allocation %}
+                                    <span class="block text-sm text-indigo-600">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                                {% endif %}
+                            </p>
+                            
+                            {% if item.discounts.size > 0 %}
+                                <div class="mt-2">
+                                    {% for discount in item.discounts %}
+                                        <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                            {{ discount.title }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <!-- Enhanced Price Display -->
+                            <div class="mt-4 space-y-2">
+                                <div class="flex justify-between items-center max-w-[200px]">
+                                    <span class="text-sm text-gray-500">Unit price</span>
+                                    <span class="text-gray-700">{{ item.price | money }}</span>
+                                </div>
+                                <div class="flex justify-between items-center max-w-[200px]">
+                                    <span class="text-sm text-gray-500">Total</span>
+                                    <span class="text-gray-900 font-semibold">{{ item.line_price | money }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 flex items-center space-x-4">
+                                <button class="text-gray-500 hover:text-gray-700 focus:outline-none" onclick="updateQuantity('{{ item.key }}', {{ item.quantity | minus: 1 }})">
+                                    <i class="fas fa-minus w-5 h-5"></i>
+                                </button>
+                                <span class="text-gray-800 font-semibold">{{ item.quantity }}</span>
+                                <button class="text-gray-500 hover:text-gray-700 focus:outline-none" onclick="updateQuantity('{{ item.key }}', {{ item.quantity | plus: 1 }})">
+                                    <i class="fas fa-plus w-5 h-5"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                        <button class="mt-4 text-red-500 hover:text-red-600 focus:outline-none" onclick="removeItem('{{ item.key }}')">
+                            <i class="fas fa-trash-alt w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>            {% endfor %}
+            
+            <!-- Cart Notes -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <label for="cart-note" class="block text-sm font-medium text-gray-700 mb-2">Add a note to your order</label>
+                <textarea id="cart-note" name="note" rows="3" class="w-full border rounded-md p-2">{{ cart.note }}</textarea>
+                <button onclick="updateCartNote()" class="mt-2 text-sm text-blue-600 hover:text-blue-700">Save note</button>
+            </div>
+        </div>
+        <!-- Order Summary -->
+        <div class="md:w-1/3">
+            {% assign shipping = cart.shipping_price | default: 0 %}
+            {% assign taxes = cart.total_tax | default: 0 %}
+            {% assign subtotal = cart.subtotal_price %}
+            {% assign computed_total = subtotal | plus: shipping | plus: taxes %}
+            {% assign total = cart.total_price | default: computed_total %}
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Order Summary</h2>
+                <div class="flex justify-between mb-3">
+                    <span class="text-gray-600">Subtotal</span>
+                    <span class="text-gray-800">{{ cart.subtotal_price | money }}</span>
+                </div>
+                <div class="flex justify-between mb-3">
+                    <span class="text-gray-600">Shipping</span>
+                    <span class="text-gray-800">{{ shipping | money }}</span>
+                </div>                <div class="flex justify-between mb-3">
+                    <span class="text-gray-600">Taxes</span>
+                    <span class="text-gray-800">{{ taxes | money }}</span>
+                    {% if cart.taxes_included %}
+                        <span class="text-sm text-gray-500 ml-2">(Included)</span>
+                    {% endif %}
+                </div>
+                <hr class="my-4">
+                <div class="flex justify-between mb-4">
+                    <span class="font-bold text-gray-900">Total</span>
+                    <span class="font-bold text-gray-900">{{ total | money }}</span>
+                </div>
+                
+                <!-- Regular checkout button -->
+                <a href="/checkout" class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-lg transition duration-300 mb-4">
+                    Proceed to Checkout
+                </a>
+
+                <!-- Accelerated checkout buttons -->
+                <div class="space-y-2">
+                    {{ form | payment_button }}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .cart-main {
+    margin-top: 133px;
+}
+
+</style>
+
+<script>
+    function updateQuantity(key, quantity) {
+        if (quantity < 0) return;
+        fetch('/cart/change.js', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: key, quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error updating cart:', error);
+        });
+    }    function removeItem(key) {
+        updateQuantity(key, 0);
+    }
+
+    function updateCartNote() {
+        const note = document.getElementById('cart-note').value;
+        fetch('/cart/update.js', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ note: note })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Cart note updated');
+        })
+        .catch(error => {
+            console.error('Error updating cart note:', error);
+        });
+    }
+</script>
+
+{% schema %}
+{
+    "name": "Cart Section",
+    "settings": []
+}
+{% endschema %}

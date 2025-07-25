@@ -1,0 +1,73 @@
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold mb-2">FEATURED COLLECTION</h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {% assign featured_collection = section.settings.collection %}
+      {% for product in featured_collection.products limit:4 %}
+        <div class="group relative">
+          <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+            <a href="{{ product.url }}">
+              {% if product.featured_image %}
+                <img 
+                  src="{{ product.featured_image | img_url: '500x500' }}" 
+                  alt="{{ product.title }}"
+                  width="500"
+                  height="500"
+                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                >
+              {% else %}
+                <div class="w-full h-full bg-gray-200"></div>
+              {% endif %}
+            </a>
+          </div>
+            <div class="mt-4 text-center">
+            <a href="{{ product.url }}" class="hover:underline">
+              <h3 class="text-lg font-medium text-gray-900">{{ product.title }}</h3>
+              <p class="mt-1 text-gray-900">{{ product.price | money_with_currency }}</p>
+            </a>
+            </div>
+        </div>
+      {% else %}
+              {% for i in (1..4) %}
+                  <div class="group relative">
+                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                      <img src="{{ 'pic1.jpg' | asset_url }}" width="400" height="400" alt="product" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 ease-in-out">
+                    </div>
+                    <div class="mt-4 text-center">
+                      <h3 class="text-lg font-medium text-gray-900">Your product's name</h3>
+                      <p class="mt-1 text-gray-900">Tk 19.99</p>
+                    </div>
+                  </div>
+              {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "FEATURED COLLECTION"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,17 @@
+{
+    "sections": {
+        "contact-form": {
+            "type": "contact-form",
+            "settings": {
+                "heading": "Get in Touch",
+                "subheading": "We would love to hear from you.",
+                "show_map": true,
+                "map_latitude": 40.7128,
+                "map_longitude": -74.0060
+            }
+        }
+    },
+    "order": [
+        "contact-form"
+    ]
+}

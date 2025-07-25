@@ -1,0 +1,436 @@
+{% schema %}
+  {
+    "name": "Main Product",
+    "settings": [],
+    "blocks": [],
+    "presets": [
+      {
+        "name": "Default",
+        "category": "Product"
+      }
+    ]
+  }
+{% endschema %}
+
+<main class="container mx-auto px-4 py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-12">
+    <!-- Product Gallery -->
+    <div class="sticky top-8">
+      <div class="relative">
+        <!-- Main Image -->
+        <div class="aspect-square bg-gray-50 rounded-xl overflow-hidden shadow-sm">
+          {% if product.images.size > 0 %}
+            <img 
+              src="{{ product.featured_image | img_url: '1200x' }}" 
+              alt="{{ product.title }}" 
+              width="1200" 
+              height="1200" 
+              class="object-contain w-full h-full p-6 transition-opacity duration-300"
+              data-main-image
+            >
+          {% endif %}
+        </div>
+
+        <!-- Badges -->
+        <div class="absolute top-4 left-4 space-y-2" id="badges-container">
+          {% if product.compare_at_price_max > product.price %}
+            {% assign savings = product.compare_at_price_max | minus: product.price %}
+            {% assign savings_pct = savings | times: 100 | divided_by: product.compare_at_price_max %}
+            <div class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm">
+              Save {{ savings_pct }}%
+            </div>
+          {% endif %}
+          {% unless product.available %}
+            <div class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm">
+              Sold Out
+            </div>
+          {% endunless %}
+        </div>
+      </div>
+
+      <!-- Thumbnails -->
+      <div class="mt-6 flex gap-3 overflow-x-auto pb-4 snap-x">
+        {% for image in product.images %}
+          <button 
+            class="w-20 h-20 shrink-0 snap-center border-2 border-transparent hover:border-blue-500 rounded-lg overflow-hidden transition-all duration-200 {% if forloop.first %}border-blue-500{% endif %}"
+            data-thumbnail
+            data-index="{{ forloop.index0 }}"
+          >
+            <img 
+              src="{{ image | img_url: '200x' }}" 
+              alt="{{ product.title }} thumbnail {{ forloop.index }}" 
+              width="200" 
+              height="200"
+              class="object-cover w-full h-full"
+            >
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="max-w-2xl">
+      <!-- Vendor & Title -->
+      <div class="mb-4">
+        <p class="text-sm text-gray-500 font-medium mb-2">
+          {{ product.vendor }}
+        </p>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight mb-4">
+          {{ product.title }}
+        </h1>
+        <div class="flex items-center space-x-2 mb-4">
+        </div>
+      </div>
+
+      {% form 'product', product, id: "product-form" %}
+        <!-- Price Section -->
+        <div class="mb-6">
+          <div class="flex items-baseline gap-4">
+            <span id="product-price" class="text-3xl font-bold text-gray-900">{{ product.price | money }}</span>
+            {% if product.compare_at_price_max > product.price %}
+              <span id="compare-price" class="text-xl text-gray-500 line-through">{{ product.compare_at_price_max | money }}</span>
+            {% else %}
+              <span id="compare-price" class="text-xl text-gray-500 line-through hidden"></span>
+            {% endif %}
+          </div>
+          
+          <!-- Shop Pay Installments -->
+          <div class="mt-2">
+            {{ form | payment_terms }}
+          </div>
+          
+          <p class="text-sm text-gray-500 mt-1">Includes VAT & Shipping</p>
+        </div>
+
+        <!-- Tax Information -->
+          {% if cart.taxes_included %}
+            <p class="text-sm text-gray-500 mt-1">Price includes tax</p>
+          {% else %}
+            <p class="text-sm text-gray-500 mt-1">Tax calculated at checkout</p>
+          {% endif %}
+          
+        <!-- Variants -->
+        {% for option in product.options_with_values %}
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-gray-700">{{ option.name }}</span>
+              {% if option.name == 'Size' %}
+                <a href="#size-chart" class="text-sm text-blue-600 hover:underline">Size Guide</a>
+              {% endif %}
+            </div>
+            <div class="grid grid-cols-4 gap-3">
+              {% for value in option.values %}
+                {% if option.name == 'Color' %}
+                  <label class="relative">
+                    <input 
+                      type="radio" 
+                      name="options[{{ option.name }}]" 
+                      value="{{ value }}" 
+                      class="peer hidden"
+                      {% if forloop.first %}checked{% endif %}
+                    >
+                    <div class="w-full aspect-square rounded-lg border-2 border-gray-200 peer-checked:border-blue-500 overflow-hidden transition-all cursor-pointer">
+                      <span 
+                        class="block w-full h-full" 
+                        style="background-color: {{ value | downcase }};"
+                      ></span>
+                    </div>
+                    <svg class="absolute bottom-1 right-1 w-4 h-4 text-white pointer-events-none peer-checked:block hidden" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </label>
+                {% else %}
+                  <label>
+                    <input 
+                      type="radio" 
+                      name="options[{{ option.name }}]" 
+                      value="{{ value }}" 
+                      class="peer hidden"
+                      {% if forloop.first %}checked{% endif %}
+                    >
+                    <div class="w-full p-3 text-center border-2 border-gray-200 rounded-lg peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all cursor-pointer hover:border-gray-300">
+                      <span class="text-sm font-medium text-gray-700">{{ value }}</span>
+                    </div>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+
+        <!-- Hidden variant input -->
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="product-variant-id">
+
+        <!-- Quantity & Add to Cart -->
+        <div class="mb-6">
+          <div class="flex items-center gap-4">
+            <div class="border rounded-lg p-1 flex items-center bg-gray-50">
+              <button type="button" class="w-10 h-10 text-gray-500 hover:text-blue-600" data-quantity-down>-</button>
+              <input 
+                type="number" 
+                name="quantity" 
+                value="1" 
+                min="1" 
+                class="w-16 text-center bg-transparent outline-none font-medium"
+                data-quantity-input
+              >
+              <button type="button" class="w-10 h-10 text-gray-500 hover:text-blue-600" data-quantity-up>+</button>
+            </div>
+            <button 
+              type="submit" 
+              name="add" 
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              {% unless product.available %}disabled{% endunless %}
+            >
+              {% if product.available %}
+                Add to Cart - {{ product.price | money }}
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+            <button 
+              type="button" 
+              data-buy-now
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              {% unless product.available %}disabled{% endunless %}
+            >
+              {% if product.available %}
+                Buy Now - {{ product.price | money }}
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+          </div>
+        </div>
+      {% endform %}
+      
+      <!-- Pickup Availability -->
+      <div data-store-availability-container
+        data-product-variant-id="{{ product.selected_or_first_available_variant.id }}">
+      </div>
+      
+      <!-- Description -->
+      <div class="prose max-w-none mb-8">
+        {{ product.description }}
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="border-t pt-6">
+        <div class="flex items-center justify-center gap-6">
+          <div class="text-center">
+            <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs text-gray-500">Quality Guarantee</p>
+          </div>
+          <div class="text-center">
+            <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs text-gray-500">Fast Shipping</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<style>
+  [data-thumbnail]:hover img,
+  [data-thumbnail].active img {
+    transform: scale(1.05);
+  }
+  .prose ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Product data
+    const productVariants = {{ product.variants | json }};
+    const productForm = document.getElementById('product-form');
+    const variantInput = document.getElementById('product-variant-id');
+    const quantityInput = document.querySelector('[data-quantity-input]');
+    const quantityDown = document.querySelector('[data-quantity-down]');
+    const quantityUp = document.querySelector('[data-quantity-up]');
+    const addToCartButton = document.querySelector('[name="add"]');
+    const buyNowButton = document.querySelector('[data-buy-now]');
+    const productPrice = document.getElementById('product-price');
+    const comparePrice = document.getElementById('compare-price');
+    const badgesContainer = document.getElementById('badges-container');
+
+    // Initialize unit price
+    let unitPrice = {{ product.selected_or_first_available_variant.price }};
+    
+    // Improved money formatting
+    function formatMoney(cents) {
+      // Use Shopify's built-in formatting if available
+      if (window.Shopify && window.Shopify.formatMoney) {
+        return Shopify.formatMoney(cents, {{ shop.money_format | json }});
+      }
+      
+      // Fallback formatting
+      const amount = (cents / 100).toFixed(2);
+      return '{{ shop.currency }}' + amount;
+    }
+    
+    // Update total price display
+    function updateTotalPrice() {
+      const quantity = parseInt(quantityInput.value) || 1;
+      const totalCents = unitPrice * quantity;
+      
+      if (addToCartButton) {
+        {% if product.available %}
+          addToCartButton.textContent = 'Add to Cart - ' + formatMoney(totalCents);
+        {% else %}
+          addToCartButton.textContent = 'Sold Out';
+        {% endif %}
+      }
+      
+      if (buyNowButton) {
+        {% if product.available %}
+          buyNowButton.textContent = 'Buy Now - ' + formatMoney(totalCents);
+        {% else %}
+          buyNowButton.textContent = 'Sold Out';
+        {% endif %}
+      }
+    }
+    
+    // Find variant based on selected options
+    function findVariant() {
+      const selectedOptions = [];
+      document.querySelectorAll('[name^="options["]').forEach(input => {
+        if (input.checked) selectedOptions.push(input.value);
+      });
+      
+      return productVariants.find(variant => {
+        return variant.options.every((option, index) => option === selectedOptions[index]);
+      });
+    }
+    
+    // Update UI when variant changes
+    function updateVariant(variant) {
+      // Update variant ID
+      variantInput.value = variant.id;
+      
+      // Update prices
+      unitPrice = variant.price;
+      productPrice.textContent = formatMoney(variant.price);
+      
+      if (variant.compare_at_price > variant.price) {
+        comparePrice.textContent = formatMoney(variant.compare_at_price);
+        comparePrice.classList.remove('hidden');
+      } else {
+        comparePrice.classList.add('hidden');
+      }
+      
+      // Update badges
+      badgesContainer.innerHTML = '';
+      
+      if (variant.compare_at_price > variant.price) {
+        const savings = variant.compare_at_price - variant.price;
+        const savings_pct = Math.round((savings / variant.compare_at_price) * 100);
+        const saveBadge = document.createElement('div');
+        saveBadge.className = 'bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm';
+        saveBadge.textContent = `Save ${savings_pct}%`;
+        badgesContainer.appendChild(saveBadge);
+      }
+      
+      if (!variant.available) {
+        const soldOutBadge = document.createElement('div');
+        soldOutBadge.className = 'bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm';
+        soldOutBadge.textContent = 'Sold Out';
+        badgesContainer.appendChild(soldOutBadge);
+      }
+      
+      // Update buttons
+      if (variant.available) {
+        addToCartButton.disabled = false;
+        buyNowButton.disabled = false;
+      } else {
+        addToCartButton.disabled = true;
+        buyNowButton.disabled = true;
+      }
+      
+      // Update store availability
+      const storeAvailabilityContainer = document.querySelector('[data-store-availability-container]');
+      if (storeAvailabilityContainer) {
+        storeAvailabilityContainer.dataset.productVariantId = variant.id;
+      }
+    }
+    
+    // Event listeners for option changes
+    document.querySelectorAll('[name^="options["]').forEach(input => {
+      input.addEventListener('change', () => {
+        const variant = findVariant();
+        if (variant) updateVariant(variant);
+        updateTotalPrice();
+      });
+    });
+    
+    // Quantity handlers
+    quantityDown.addEventListener('click', () => {
+      let current = parseInt(quantityInput.value) || 1;
+      if (current > 1) {
+        quantityInput.value = current - 1;
+        updateTotalPrice();
+      }
+    });
+    
+    quantityUp.addEventListener('click', () => {
+      quantityInput.value = parseInt(quantityInput.value) + 1;
+      updateTotalPrice();
+    });
+    
+    quantityInput.addEventListener('change', updateTotalPrice);
+    
+    // Buy Now handler - clears cart and adds only this product
+    buyNowButton.addEventListener('click', () => {
+      // Disable button during processing
+      const originalText = buyNowButton.textContent;
+      buyNowButton.disabled = true;
+      buyNowButton.textContent = 'Processing...';
+      
+      // First clear the cart
+      fetch('/cart/clear.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(() => {
+        // Then add the selected product
+        const formData = new FormData(productForm);
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        });
+      })
+      .then(response => {
+        if (response.ok) {
+          // Redirect to checkout
+          window.location.href = '/checkout';
+        } else {
+          throw new Error('Failed to add product to cart');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error: ' + error.message);
+        buyNowButton.disabled = false;
+        buyNowButton.textContent = originalText;
+      });
+    });
+    
+    // Initialize
+    updateTotalPrice();
+  });
+</script>

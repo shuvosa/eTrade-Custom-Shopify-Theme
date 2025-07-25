@@ -1,0 +1,46 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white shadow-md rounded-lg p-6 max-w-md mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Create Account</h1>
+        
+        {% form 'create_customer' %}
+            {% if form.errors %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ form.errors | default_errors }}
+                </div>
+            {% endif %}
+
+            <div class="space-y-4">
+                <div>
+                    <label for="FirstName" class="block mb-2">First Name</label>
+                    <input type="text" name="customer[first_name]" id="FirstName" class="w-full p-2 border rounded-md">
+                </div>
+                
+                <div>
+                    <label for="LastName" class="block mb-2">Last Name</label>
+                    <input type="text" name="customer[last_name]" id="LastName" class="w-full p-2 border rounded-md">
+                </div>
+
+                <div>
+                    <label for="Email" class="block mb-2">Email</label>
+                    <input type="email" name="customer[email]" id="Email" class="w-full p-2 border rounded-md">
+                </div>
+
+                <div>
+                    <label for="CreatePassword" class="block mb-2">Password</label>
+                    <input type="password" name="customer[password]" id="CreatePassword" class="w-full p-2 border rounded-md">
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                    Create Account
+                </button>
+            </div>
+        {% endform %}
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "Registration Section",
+    "settings": []
+}
+{% endschema %}

@@ -1,0 +1,288 @@
+ <div class="music-experience-banner">
+      <div class="product-banner-content">
+        <h1>{{ section.settings.heading }}</h1>
+        
+        <div class="countdown-timer">
+          <div class="timer-unit">
+            <span class="timer-days">0</span>
+            <span>Day</span>
+          </div> 
+          <div class="timer-unit">
+            <span class="timer-hours">0</span>
+            <span>Hrs</span>
+          </div>
+          <div class="timer-unit">
+            <span class="timer-minutes">0</span>
+            <span>Min</span>
+          </div>
+          <div class="timer-unit">
+            <span class="timer-seconds">0</span>
+            <span>Sec</span>
+          </div>
+        </div>
+    
+        <a href="#" class="cta-button">{{ section.settings.button_text }}</a>
+      </div>
+    
+      <div class="banner-image">
+        {% if section.settings.image != blank %}
+          {{ section.settings.image | img_url: width: 800 | image_tag: loading: 'lazy' }}
+        {% else %}
+          <img src="{{ 'pic1.jpg' | asset_url }}" alt="White Headphones" loading="lazy" width="800" height="800">
+        {% endif %}
+      </div>
+
+    </div>
+
+
+
+    {% schema %}
+        {
+          "name": "Music Experience Banner",
+          "settings": [
+            {
+              "type": "text",
+              "id": "heading",
+              "label": "Heading",
+              "default": "Enhance Your Music Experience"
+            },
+            {
+              "type": "image_picker",
+              "id": "image",
+              "label": "Headphones Image",
+              "info": "Recommended size: 800x800px"
+            },
+            {
+              "type": "text",
+              "id": "button_text",
+              "label": "Button Text",
+              "default": "Check it Out"
+            },
+            {
+              "type": "header",
+              "content": "Countdown Settings"
+            },
+            {
+              "type": "number",
+              "id": "days",
+              "label": "Days",
+              "default": 129
+            },
+            {
+              "type": "number",
+              "id": "hours",
+              "label": "Hours",
+              "default": 3
+            },
+            {
+              "type": "number",
+              "id": "minutes",
+              "label": "Minutes",
+              "default": 4
+            },
+            {
+              "type": "number",
+              "id": "seconds",
+              "label": "Seconds",
+              "default": 44
+            }
+          ],
+          "presets": [
+            {
+              "name": "Music Experience Banner",
+              "category": "Promotional"
+            }
+          ]
+        }
+        {% endschema %}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const timer = {
+        days: {{ section.settings.days }},
+        hours: {{ section.settings.hours }},
+        minutes: {{ section.settings.minutes }},
+        seconds: {{ section.settings.seconds }},
+        
+        start: function() {
+          let totalSeconds = this.days * 86400 + this.hours * 3600 + 
+                            this.minutes * 60 + this.seconds;
+          
+          const countdown = setInterval(() => {
+            totalSeconds--;
+            
+            if(totalSeconds <= 0) clearInterval(countdown);
+            
+            this.days = Math.floor(totalSeconds / 86400);
+            const hoursRemainder = totalSeconds % 86400;
+            this.hours = Math.floor(hoursRemainder / 3600);
+            const minutesRemainder = hoursRemainder % 3600;
+            this.minutes = Math.floor(minutesRemainder / 60);
+            this.seconds = minutesRemainder % 60;
+            
+            this.updateDisplay();
+          }, 1000);
+        },
+        
+        updateDisplay: function() {
+          document.querySelector('.timer-days').textContent = this.days;
+          document.querySelector('.timer-hours').textContent = this.hours.toString().padStart(2, '0');
+          document.querySelector('.timer-minutes').textContent = this.minutes.toString().padStart(2, '0');
+          document.querySelector('.timer-seconds').textContent = this.seconds.toString().padStart(2, '0');
+        }
+      };
+    
+      timer.start();
+    });
+    </script>
+    
+  
+    <style>
+.music-experience-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: linear-gradient(to right, #f9f9f9 50%, #ffffff 50%);
+}
+
+.product-banner-content {
+  flex: 1;
+  padding-right: 80px;
+  max-width: 600px;
+}
+
+.product-banner-content h1 {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.product-banner-content h1:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: #2a2a2a;
+}
+
+.countdown-timer {
+  display: flex;
+  gap: 40px;
+  margin: 40px 0;
+}
+
+.timer-unit {
+  text-align: center;
+  position: relative;
+}
+
+.timer-unit:not(:last-child):after {
+  content: ':';
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.8rem;
+  color: #666;
+}
+
+.timer-unit span:first-child {
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: #2a2a2a;
+  display: block;
+  margin-bottom: 8px;
+  font-family: 'Courier New', monospace;
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.timer-unit span:last-child {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  font-weight: 500;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 16px 40px;
+  background: #2a2a2a;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-top: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.cta-button:hover {
+  background: #ffffff;
+  color: #2a2a2a;
+  border-color: #2a2a2a;
+  transform: translateY(-2px);
+}
+
+.banner-image {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.banner-image img {
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.banner-image:hover img {
+  transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .music-experience-banner {
+    flex-direction: column;
+    padding: 40px 20px;
+    background: #f9f9f9;
+  }
+  
+  .product-banner-content {
+    padding-right: 0;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  
+  .product-banner-content h1:after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .countdown-timer {
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .timer-unit:not(:last-child):after {
+    right: -15px;
+  }
+}
+</style>

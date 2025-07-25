@@ -1,0 +1,103 @@
+<section class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-3xl font-bold mb-2">{{ section.settings.heading | default: 'Browse by Category' }}</h2>
+                <p class="text-gray-600">{{ section.settings.subheading | default: 'Find your favorite products by category' }}</p>
+            </div>
+            <div class="hidden md:flex items-center space-x-2">
+                <button class="category-prev bg-white p-3 rounded-full shadow-md hover:bg-blue-600 hover:text-white transition-colors">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="category-next bg-white p-3 rounded-full shadow-md hover:bg-blue-600 hover:text-white transition-colors">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="category-slider flex overflow-x-auto space-x-4 scroll-smooth snap-x snap-mandatory">
+            {% if section.blocks.size > 0 %}
+                {% comment %} Show manually selected collections {% endcomment %}
+                {% for block in section.blocks %}
+                    {% assign collection = block.settings.collection %}
+                    <div class="flex-shrink-0 snap-center first:ml-auto last:mr-auto mx-2">
+                        <a href="{{ collection.url }}" class="category-card block bg-white rounded-xl p-6 text-center cursor-pointer hover:shadow-lg transition-shadow">
+                            <div class="category-icon w-20 h-20 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center">
+                                {% if collection.image %}
+                                  <img src="{{ collection.image | img_url: 'medium' }}" alt="{{ collection.title }}" class="w-12 h-12" width="48" height="48">
+                                {% else %}
+                                    <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                                {% endif %}
+                            </div>
+                            <h3 class="font-semibold text-lg mb-1">{{ collection.title }}</h3>
+                            {% if collection.products_count %}
+                                <p class="text-gray-600 text-sm">{{ collection.products_count }}+ Products</p>
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endfor %}
+                
+            {% else %}
+                {% comment %} Automatically show first 6 collections {% endcomment %}
+                {% for collection in collections limit:6 %}
+                    <div class="flex-shrink-0 snap-center first:ml-auto last:mr-auto mx-2">
+                        <a href="{{ collection.url }}" class="category-card block bg-white rounded-xl p-6 text-center cursor-pointer hover:shadow-lg transition-shadow">
+                            <div class="category-icon w-20 h-20 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center">
+                                {% if collection.image %}
+                                    <img src="{{ collection.image | img_url: 'medium' }}" alt="{{ collection.title }}" class="w-12 h-12" width="48" height="48">
+                                {% else %}
+                                    <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                                {% endif %}
+                            </div>
+                            <h3 class="font-semibold text-lg mb-1">{{ collection.title }}</h3>
+                            {% if collection.products_count %}
+                                <p class="text-gray-600 text-sm">{{ collection.products_count }}+ Products</p>
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Slider",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Browse by Category"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Find your favorite products by category"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Slider",
+      "category": "Collections",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}

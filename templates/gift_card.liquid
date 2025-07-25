@@ -1,0 +1,83 @@
+{% layout none %}
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Gift Card from {{ shop.name }} - {{ gift_card.initial_value | money }}">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>{{ shop.name }} Gift Card - {{ gift_card.initial_value | money }}</title>
+  <style>
+    /* Error handling for images */
+    img[src=""] { display: none; }
+    .fallback-text { display: none; }
+    img:not([src]) + .fallback-text,
+    img[src=""] + .fallback-text {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body>
+  <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">    {% if shop.email_logo_url %}
+      <img src="{{ shop.email_logo_url }}" alt="{{ shop.name }}" style="max-width: 100%; display: block; margin: 0 auto 20px;" width="200" height="100">
+    {% else %}
+      <h1 style="text-align: center; margin-bottom: 20px;">{{ shop.name }}</h1>
+    {% endif %}
+    <p style="text-align: center; font-size: 18px; margin-bottom: 20px;">You've received a gift card from {{ shop.name }}!</p>
+
+    <!-- Gift Card Code -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      <p style="font-size: 16px;">Your gift card code is:</p>
+      <p style="font-size: 24px; font-weight: bold;">{{ gift_card.code }}</p>
+    </div>    <!-- QR Code -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      {% assign code_image = gift_card.qr_code | img_url: '240x240' %}
+      <img src="{{ code_image }}" 
+           alt="Gift card QR code for {{ gift_card.code }}" 
+           width="120" 
+           height="120" 
+           style="width: 120px; height: 120px;">
+    </div>    <!-- Apple Wallet Button -->
+    {% if gift_card.pass_url %}
+    <div style="text-align: center; margin-bottom: 20px;">
+     {% if gift_card.pass_url %}
+  <a href="{{ gift_card.pass_url }}" >
+    <img id="apple-wallet-badge"
+      src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+      width="120"
+      height="40"
+      alt="Add To Apple Wallet">
+    </a>
+{% endif %}
+    </div>
+    {% endif %}
+
+    <p style="text-align: center; font-size: 18px; margin-bottom: 20px;">
+      Initial Value: {{ gift_card.initial_value | money }}
+      {% if gift_card.balance != gift_card.initial_value %}
+        <br>
+        Current Balance: {{ gift_card.balance | money }}
+      {% endif %}
+    </p>
+    
+    {% if gift_card.expires_on %}
+    <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 20px;">Expires on: {{ gift_card.expires_on | date: '%B %d, %Y' }}</p>
+    {% endif %}
+    
+    <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">To use this gift card, enter the code at checkout on our website.</p>
+    <p style="text-align: center; margin-bottom: 20px;"><a href="{{ gift_card.url }}" style="color: #007bff; text-decoration: none;">View your gift card online</a></p>
+    
+    <div style="text-align: center;">
+      <a href="{{ shop.url }}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Shop Now</a>
+    </div>
+  </div>
+</body>
+</html>
+
+

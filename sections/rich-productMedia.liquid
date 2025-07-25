@@ -1,0 +1,259 @@
+{% comment %} rich-product-media.liquid {% endcomment %}
+<div class="rich-media-section py-12">
+  <div class="container mx-auto px-4">
+    <h2 class="text-2xl font-bold text-center mb-8">{{ section.settings.heading }}</h2>
+    
+    <div class="rich-media-container grid grid-cols-1 md:grid-cols-2 gap-8">
+      {% for block in section.blocks %}
+        <div class="rich-media-item relative overflow-hidden rounded-xl shadow-lg" {{ block.shopify_attributes }}>
+          {% case block.type %}
+            {% when '3d_model' %}
+              <div class="model-viewer-container w-full h-96 bg-gray-100">
+                {{ block.settings.model | model_viewer_tag: 
+                  reveal: 'interaction', 
+                  auto-rotate: true, 
+                  camera-controls: true,
+                  ar: true,
+                  ar-modes: 'scene-viewer quick-look webxr',
+                  class: 'w-full h-full'
+                }}
+                <button class="ar-button absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  </svg>
+                </button>
+              </div>
+
+            {% when 'video' %}
+              <div class="video-container relative aspect-video bg-black">
+                {% if block.settings.video_url.type == 'youtube' %}
+                  <iframe 
+                    src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?autoplay=0&modestbranding=1&rel=0" 
+                    class="absolute top-0 left-0 w-full h-full" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                  </iframe>
+                {% elsif block.settings.video_url.type == 'vimeo' %}
+                  <iframe 
+                    src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}?autoplay=0&color=ffffff&title=0&byline=0&portrait=0" 
+                    class="absolute top-0 left-0 w-full h-full" 
+                    frameborder="0" 
+                    allow="autoplay; fullscreen" 
+                    allowfullscreen>
+                  </iframe>
+                {% else %}
+                  {{ block.settings.video_hosted | video_tag: 
+                    autoplay: false, 
+                    loop: block.settings.loop_video, 
+                    muted: true, 
+                    controls: true,
+                    class: 'w-full h-full object-cover'
+                  }}
+                {% endif %}
+              </div>
+
+            {% when 'image' %}
+              <div class="image-container relative">
+                {% if block.settings.image %}
+                  <img 
+                    src="{{ block.settings.image | img_url: '1200x' }}" 
+                    alt="{{ block.settings.image.alt | escape }}" 
+                    width="1200"
+                    height="{{ 1200 | divided_by: block.settings.image.aspect_ratio | round }}"
+                    class="w-full h-auto rounded-xl"
+                    loading="lazy"
+                  >
+                {% else %}
+                  <div class="bg-gray-200 border-2 border-dashed rounded-xl w-full h-96 flex items-center justify-center">
+                    <span class="text-gray-500">Upload an image</span>
+                  </div>
+                {% endif %}
+              </div>
+
+            {% when 'custom_html' %}
+              <div class="custom-html">
+                {{ block.settings.html_content }}
+              </div>
+          {% endcase %}
+          
+          {% if block.settings.caption != blank %}
+            <div class="mt-4 text-center text-gray-600">
+              {{ block.settings.caption }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .model-viewer-container {
+    position: relative;
+  }
+  
+  .ar-button {
+    z-index: 10;
+  }
+  
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+  }
+  
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize model viewers
+    const modelViewers = document.querySelectorAll('model-viewer');
+    
+    modelViewers.forEach(viewer => {
+      viewer.addEventListener('load', () => {
+        console.log('3D model loaded:', viewer);
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Rich Product Media",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Product Experience"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Section max width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "default": 1200,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "3d_model",
+      "name": "3D Model",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Associated product"
+        },
+        {
+          "type": "url",
+          "id": "model",
+          "label": "3D Model"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Explore in 3D"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Associated product"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Video URL",
+          "accept": ["youtube", "vimeo"],
+          "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+        },
+        {
+          "type": "video",
+          "id": "video_hosted",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "checkbox",
+          "id": "loop_video",
+          "label": "Loop video",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Product in action"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Associated product"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Detailed view"
+        }
+      ]
+    },
+    {
+      "type": "custom_html",
+      "name": "Custom HTML",
+      "settings": [
+        {
+          "type": "html",
+          "id": "html_content",
+          "label": "HTML Content",
+          "default": "<div class='p-8 bg-gray-100 rounded-xl'><h3 class='text-xl font-bold'>Custom Content</h3><p class='mt-2'>Add your custom HTML content here</p></div>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich Product Media",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "video"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

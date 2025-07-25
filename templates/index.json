@@ -1,0 +1,30 @@
+{
+    "sections": {
+        "hero": {
+            "type": "hero"
+        },
+        "featured-products": {
+            "type": "featured-products"
+        },
+        "collection_find":{
+            "type": "collection_find"
+        },
+        "single-product":{
+            "type": "single-product"
+        },
+        "blog-post": {
+            "type": "blog-post"
+        },
+        "newsletter-section": {
+            "type": "newsletter-section"
+        },
+    },
+    "order": [
+        "hero",
+        "featured-products",
+        "collection_find",
+        "single-product",
+        "blog-post",
+        "newsletter-section"
+    ]
+}

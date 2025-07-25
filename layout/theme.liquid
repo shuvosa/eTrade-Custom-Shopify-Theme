@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>
+        {%- if template.name == "index" -%}
+            {{ shop.name }} | {{ shop.description }}
+        {%- elsif template.name == "page" -%}
+            {{ page.title }} | {{ shop.name }}
+        {%- elsif template.name == "product" -%}
+            {{ product.title }} | {{ shop.name }}
+        {%- elsif template.name == "collection" -%}
+            {{ collection.title }} | {{ shop.name }}
+        {%- elsif template.name == "blog" -%}
+            {{ blog.title }} | {{ shop.name }}
+        {%- elsif template.name == "article" -%}
+            {{ article.title }} | {{ blog.title }} | {{ shop.name }}
+        {%- else -%}
+            {{ page_title }} | {{ shop.name }}
+        {%- endif -%}
+    </title>
+
+    <!-- Meta Description -->
+    <meta name="description" content="{{ page_description | default: shop.description | escape }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <!-- Social Media Meta Tags -->
+    <meta property="og:site_name" content="{{ shop.name }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ page_title }}">
+    <meta property="og:type" content="{% if template.name == 'product' %}product{% else %}website{% endif %}">
+    <meta property="og:description" content="{{ page_description | default: shop.description | escape }}">
+    
+    {% if template.name == 'product' %}
+        <meta property="og:price:amount" content="{{ product.price | money_without_currency }}">
+        <meta property="og:price:currency" content="{{ shop.currency }}">
+        
+        <!-- Product Structured Data -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "{{ product.title }}",
+            "description": "{{ product.description | strip_html }}",
+            "image": "{{ product.featured_image | img_url: 'large' }}",
+            "url": "{{ shop.url }}{{ product.url }}",
+            "sku": "{{ product.selected_or_first_available_variant.sku }}",
+            "brand": {
+                "@type": "Brand",
+                "name": "{{ shop.name }}"
+            },
+            "offers": {
+                "@type": "Offer",
+                "price": "{{ product.price | money_without_currency }}",
+                "priceCurrency": "{{ shop.currency }}",
+                "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+                "url": "{{ shop.url }}{{ product.url }}"
+            }
+        }
+        </script>
+    {% endif %}
+
+    {% if settings.social_share_image != blank %}
+        <meta property="og:image" content="{{ settings.social_share_image | img_url: 'large' }}">
+        <meta property="twitter:image" content="{{ settings.social_share_image | img_url: 'large' }}">
+        <meta property="twitter:card" content="summary_large_image">
+    {% endif %}
+    {{ content_for_header }}
+    {{ 'style.css' | asset_url | stylesheet_tag }}
+   
+    {{ 'slick.min.css' | asset_url | stylesheet_tag }}
+     {{ 'slick-theme.min.css' | asset_url | stylesheet_tag }}
+     
+     {{ 'pickup-availability.css' | asset_url | stylesheet_tag }}
+
+    <script src="{{ 'tailwind.js' | asset_url }}" defer></script>
+    <script src="{{ 'jquery-3.7.1.min.js' | asset_url }}" defer></script>
+     <script src="{{ 'slick.min.js' | asset_url }}" defer></script>
+     <script src="{{ 'font-awesome.js' | asset_url }}" defer></script>
+     <script src="{{ 'lucide.min.js' | asset_url }}" defer></script>
+    <script src="{{ 'pickup-availability.js' | asset_url }}" defer></script>
+    <style>
+        :root {
+            --primary-color: {{ settings.primary_color }};
+            --secondary-color: {{ settings.secondary_color }};
+            --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-body);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+        }
+    </style>
+</head>
+<body>
+    {% section 'header' %}
+    
+    <main class="main-content">
+        {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+    
+    <script src="{{ 'script.js' | asset_url }}" defer></script>
+</body>
+</html>

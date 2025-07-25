@@ -1,0 +1,60 @@
+<!-- Newsletter Section -->
+<section class="bg-blue-600 py-16">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="text-white mb-8 md:mb-0">
+                <h2 class="text-3xl font-bold mb-2">{{ section.settings.heading }}</h2>
+                <p>{{ section.settings.description }}</p>
+            </div>
+            <div class="w-full md:w-1/2">
+                {% form 'customer', class: 'flex', id: 'contact_form' %}
+                    <input type="hidden" name="contact[tags]" value="newsletter">
+                    <input type="email"
+                        name="contact[email]"
+                        class="flex-1 px-6 py-4 rounded-l-full focus:outline-none"
+                        placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}"
+                        required
+                    >
+                    <button type="submit" 
+                        class="bg-gray-900 text-white px-8 py-4 rounded-r-full hover:bg-gray-800" 
+                        aria-label="{{ 'general.newsletter_form.submit' | t }}">
+                        {{ 'general.newsletter_form.submit' | t }}
+                    </button>
+                {%- if form.posted_successfully? -%}
+                    <p class="text-white mt-4">Thank you for subscribing!</p>
+                {%- elsif form.errors -%}
+                    <div class="text-red-100 mt-4">
+                        {{ form.errors | default_errors }}
+                    </div>
+                {%- endif -%}
+                {% endform %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Newsletter",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Subscribe to Our Newsletter"
+        },
+        {
+            "type": "text",
+            "id": "description",
+            "label": "Description",
+            "default": "Get the latest updates on new products and upcoming sales"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Newsletter Section",
+            "category": "Promotional"
+        }
+    ]
+}
+{% endschema %}

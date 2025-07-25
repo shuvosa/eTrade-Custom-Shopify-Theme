@@ -1,0 +1,30 @@
+{% schema %}
+    {
+        "name": "Product Template",
+        "settings": []
+    }
+    {% endschema %}
+    
+    <div class="product-page">
+        <div class="product-images">
+            {% for image in product.images %}
+                <img src="{{ image | image_url: 'large' }}" alt="{{ product.title }}" width="400" height="400">
+            {% endfor %}
+        </div>
+        
+        <div class="product-info">
+            <h1>{{ product.title }}</h1>
+            <div class="price">{{ product.price | money }}</div>
+            <div class="description">{{ product.description }}</div>
+            
+            <form action="/cart/add" method="post">
+                <select name="id">
+                    {% for variant in product.variants %}
+                        <option value="{{ variant.id }}">{{ variant.title }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantity" value="1" min="1">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
+    </div>

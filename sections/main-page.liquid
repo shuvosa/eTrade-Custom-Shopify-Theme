@@ -1,0 +1,31 @@
+{% schema %}
+    {
+        "name": "Main Page Content",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "show_title",
+                "label": "Show page title",
+                "default": true
+            },
+            {
+                "type": "color",
+                "id": "bg_color",
+                "label": "Content background color",
+                "default": "#ffffff"
+            }
+        ]
+    }
+    {% endschema %}
+    
+    <section id="main-page-{{ section.id }}" class="container mx-auto px-4 py-8">
+        {%- if section.settings.show_title -%}
+            <h1 class="text-3xl font-bold mb-8 text-center">{{ page.title }}</h1>
+        {%- endif -%}
+        
+        <div class="rounded-lg shadow-md p-6" style="background-color: {{ section.settings.bg_color }};">
+            <div class="prose max-w-none">
+                {{ page.content }}
+            </div>
+        </div>
+    </section>

@@ -1,0 +1,9 @@
+{
+    "sections": {
+        "main": {
+            "type": "register-section",
+            "settings": {}
+        }
+    },
+    "order": ["main"]
+}

@@ -1,0 +1,76 @@
+{
+  "current": {
+    "colors": {
+      "color_primary": "#000000",
+      "color_secondary": "#ffffff",
+      "color_background": "#f5f5f5",
+      "color_text": "#333333",
+      "color_link": "#007bff"
+    },
+    "typography": {
+      "font_heading": "Helvetica, Arial, sans-serif",
+      "font_body": "Georgia, serif",
+      "font_size_heading": 24,
+      "font_size_body": 16
+    },
+    "layout": {
+      "container_width": 1200,
+      "grid_columns": "3",
+      "spacing": 20
+    },
+    "header_footer": {
+      "logo": "",
+      "navigation_menu": "",
+      "social_facebook": "",
+      "social_twitter": "",
+      "social_instagram": ""
+    },
+    "product_pages": {
+      "show_related_products": true,
+      "product_image_zoom": false,
+      "variant_picker_style": "dropdown"
+    },
+    "cart_checkout": {
+      "cart_layout": "standard",
+      "checkout_button_color": "#28a745"
+    }
+  },
+  "presets": {
+    "eTrade": {
+      "colors": {
+        "color_primary": "#2d3436",
+        "color_secondary": "#00b894",
+        "color_background": "#ffffff",
+        "color_text": "#2d3436",
+        "color_link": "#00b894"
+      },
+      "typography": {
+        "font_heading": "Roboto, sans-serif",
+        "font_body": "Open Sans, sans-serif",
+        "font_size_heading": 28,
+        "font_size_body": 16
+      },
+      "layout": {
+        "container_width": 1280,
+        "grid_columns": "4",
+        "spacing": 24
+      },
+      "header_footer": {
+        "logo": "",
+        "navigation_menu": "main-menu",
+        "social_facebook": "https://facebook.com",
+        "social_twitter": "https://twitter.com",
+        "social_instagram": "https://instagram.com"
+      },
+      "product_pages": {
+        "show_related_products": true,
+        "product_image_zoom": true,
+        "variant_picker_style": "buttons"
+      },
+      "cart_checkout": {
+        "cart_layout": "floating",
+        "checkout_button_color": "#00b894"
+      }
+    }
+  }
+}

@@ -1,0 +1,142 @@
+[
+    {
+    "name": "theme_info",
+    "theme_name": "eTrade",
+    "theme_author": "Shohanur Islam",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://evening-megaraptor-26f.notion.site/TechElectra-Modern-Theme-Documentation-209b2eeff69c80718785cad80fcc8737#209b2eeff69c80799b11e4a8c833300a",
+    "theme_support_url": "https://docs.google.com/forms/d/e/1FAIpQLSewVlzhj58PxGp8MHyALl87VwVGdTjn9P4RuNcWHvsrZu0JVw/viewform?usp=header",
+     },
+    {
+        "name": "Header Settings",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "logo",
+                "label": "Logo"
+            },
+            {
+                "type": "link_list",
+                "id": "main_menu",
+                "label": "Main Menu",
+                "default": "main-menu"
+            },
+            {
+                "type": "checkbox",
+                "id": "show_search",
+                "label": "Show Search Bar",
+                "default": true
+            },
+            {
+                "type": "checkbox",
+                "id": "sticky_header",
+                "label": "Sticky Header",
+                "default": true
+            }
+        ]
+    },
+    {
+        "name": "Footer Settings",
+        "settings": [
+            {
+                "type": "text",
+                "id": "copyright_text",
+                "label": "Copyright Text",
+                "default": "© 2024 Your Store Name"
+            },
+            {
+                "type": "link_list",
+                "id": "footer_menu",
+                "label": "Footer Menu"
+            },
+            {
+                "type": "checkbox",
+                "id": "show_social_icons",
+                "label": "Show Social Icons",
+                "default": true
+            }
+        ]
+    },
+    {
+        "name": "Color Scheme",
+        "settings": [
+            {
+                "type": "color",
+                "id": "primary_color",
+                "label": "Primary Color",
+                "default": "#000000"
+            },
+            {
+                "type": "color",
+                "id": "secondary_color",
+                "label": "Secondary Color",
+                "default": "#ffffff"
+            },
+            {
+                "type": "color",
+                "id": "accent_color",
+                "label": "Accent Color",
+                "default": "#ff3c20"
+            },
+            {
+                "type": "color_background",
+                "id": "gradient_background",
+                "label": "Gradient Background"
+            }
+        ]
+    },
+    {
+        "name": "Typography",
+        "settings": [
+            {
+                "type": "font_picker",
+                "id": "heading_font",
+                "label": "Heading Font",
+                "default": "helvetica_n4"
+            },
+            {
+                "type": "font_picker",
+                "id": "body_font",
+                "label": "Body Font",
+                "default": "helvetica_n4"
+            },
+            {
+                "type": "range",
+                "id": "base_font_size",
+                "min": 12,
+                "max": 24,
+                "step": 1,
+                "unit": "px",
+                "label": "Base Font Size",
+                "default": 16
+            }
+        ]
+    },
+    {
+        "name": "Newsletter",
+        "settings": [
+            {
+                "type": "text",
+                "id": "newsletter_title",
+                "label": "Newsletter Title",
+                "default": "Subscribe to our newsletter"
+            },
+            {
+                "type": "richtext",
+                "id": "newsletter_text",
+                "label": "Newsletter Description",
+                "default": "<p>Get updates about new products and special offers</p>"
+            }
+        ]
+    },
+    {
+    "name": "Social Sharing",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "social_share_image",
+            "label": "Social Share Image"
+        }
+    ]
+}
+]

@@ -1,0 +1,186 @@
+{%- assign complementary_products = product.metafields.complementary.products.value -%}
+
+{%- if complementary_products and complementary_products != empty -%}
+  <div class="complementary-products" 
+       style="--padding-top: {{ section.settings.padding_top }}px; 
+              --padding-bottom: {{ section.settings.padding_bottom }}px;">
+    
+    <div class="container">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="complementary-products__heading {{ section.settings.heading_style }}">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+      
+      <div class="complementary-products__grid grid grid--{{ section.settings.columns_mobile }}-col 
+                 grid--{{ section.settings.columns_desktop }}-col-desktop">
+        {%- for comp_product in complementary_products limit: 4 -%}
+          <div class="complementary-product grid__item">
+            {% render 'product-card',
+              product: comp_product,
+              show_secondary_image: section.settings.show_secondary_image,
+              show_vendor: section.settings.show_vendor,
+              show_price: section.settings.show_price
+            %}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Complementary products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Bought Together"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Heading style",
+      "options": [
+        {"value": "h1", "label": "H1"},
+        {"value": "h2", "label": "H2"},
+        {"value": "h3", "label": "H3"}
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "options": [
+        {"value": "1", "label": "1"},
+        {"value": "2", "label": "2"}
+      ],
+      "default": "2"
+    },
+    {
+      "type": "header",
+      "content": "Product card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show hover image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Complementary products",
+      "category": "Products"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .complementary-products {
+    padding: var(--padding-top) 0 var(--padding-bottom);
+  }
+
+  .complementary-products__heading {
+    margin-bottom: 2.4rem;
+    text-align: center;
+    font-size: calc(var(--font-heading-scale) * 2.4rem);
+  }
+
+  .complementary-products__grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+  }
+
+  @media (max-width: 749px) {
+    .complementary-products__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      grid-auto-flow: column;
+      scrollbar-width: thin;
+    }
+    
+    .complementary-product {
+      min-width: 200px;
+    }
+  }
+</style>
+
+{% comment %} Add to theme.liquid in the <head> section {% endcomment %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Create metafield definition when theme is installed
+  fetch(window.Shopify.routes.root + 'meta.json', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Web': 'true'
+    },
+    body: JSON.stringify({
+      "metafield_definition": {
+        "namespace": "complementary",
+        "key": "products",
+        "name": "Complementary Products (Max 4)",
+        "description": "Add up to 4 products that complement this item",
+        "owner_type": "PRODUCT",
+        "type": "list.product_reference",
+        "validations": [
+          {
+            "name": "json",
+            "value": "{\"max\":4}"
+          }
+        ]
+      }
+    })
+  }).catch(error => console.log('Metafield already exists'));
+});
+</script>

@@ -1,0 +1,245 @@
+
+
+/* Product Grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem 5%;
+}
+
+.product-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-title {
+    margin: 1rem;
+    font-size: 1.1rem;
+}
+
+.product-price {
+    margin: 1rem;
+    font-weight: bold;
+    color: #666;
+}
+
+/* Footer Styles */
+.footer {
+    padding: 2rem 5%;
+    text-align: center;
+    background: #f8f8f8;
+    margin-top: 3rem;
+}
+
+.footer-menu {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.footer-link {
+    color: #666;
+    text-decoration: none;
+}
+
+.copyright {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Banner Styles */
+.banner {
+    position: relative;
+    margin: 2rem 0;
+}
+
+.banner img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+}
+
+.banner-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: opacity 0.3s ease;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+
+.slick-prev:before, .slick-next:before {
+    color: #3577F0;
+}
+.mobile-menu {
+    display: none;
+}
+.mobile-menu.active {
+    display: block;
+}
+.submenu {
+    display: none;
+}
+.submenu.active {
+    display: block;
+}
+.search-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+}
+.search-overlay.active {
+    display: flex;
+}
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    z-index: 1000;
+    transition: right 0.3s ease-in-out;
+}
+.cart-drawer.active {
+    right: 0;
+}
+.cart-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+.cart-overlay.active {
+    display: block;
+}
+.category-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+.category-card:hover {
+    transform: translateY(-5px);
+    border-color: #3577F0;
+}
+.category-icon {
+    transition: all 0.3s ease;
+}
+.category-card:hover .category-icon {
+    transform: scale(1.1);
+}
+.hero-slide {
+    position: relative;
+    height: 600px;
+    background-size: contain;
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-color: #f8f9fa;
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+    padding: 60px;
+}
+.hero-image.flex-1 {
+    margin-top: -343px;
+}
+@media (max-width: 768px) {
+    .mobile-menu {
+        position: fixed;
+        right: 0;
+        top: 72px;
+        width: 250px;
+        background: white;
+        height: calc(100vh - 72px);
+        overflow-y: auto;
+    }
+    .cart-drawer {
+        width: 300px;
+    }
+    .hero-slide {
+        height: 400px;
+        background-size: cover;
+        background-position: center;
+    }
+    .hero-content {
+        padding: 30px;
+    }
+}
+
+.product-main{
+    margin-top: 71px;
+}
+
+
+
+/* Localization Selector Styling */
+select::-ms-expand {
+    display: none;
+  }
+  
+  .localization-form {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .localization-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+
+/* product card  */
+
+@media (prefers-reduced-motion: reduce) {
+    .card-skeleton,
+    .product-card img {
+      animation: none;
+      transition: none;
+    }
+  }
